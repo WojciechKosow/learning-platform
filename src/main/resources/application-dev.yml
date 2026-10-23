@@ -1,0 +1,21 @@
+# Local development only — NEVER activate this profile in a deployed
+# environment. Values here match compose.yaml and can still be overridden by
+# environment variables or a local .env file.
+
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    password: ${DB_PASSWORD:learning_platform}
+
+app:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
+  security:
+    jwt:
+      # Public, development-only signing key.
+      secret: ${JWT_SECRET:dev-only-insecure-jwt-secret-do-not-use-in-production}
+    auth:
+      cookie:
+        # Plain http://localhost; production keeps Secure cookies.
+        secure: ${AUTH_COOKIE_SECURE:false}

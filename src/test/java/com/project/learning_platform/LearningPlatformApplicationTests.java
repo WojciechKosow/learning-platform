@@ -1,9 +1,9 @@
 package com.project.learning_platform;
 
+import com.project.learning_platform.support.IntegrationTest;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+@IntegrationTest
 class LearningPlatformApplicationTests {
 
 	@Test
