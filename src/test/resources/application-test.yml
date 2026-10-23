@@ -1,0 +1,13 @@
+# Tests run against a Testcontainers PostgreSQL (see TestcontainersConfiguration),
+# never against a shared database.
+app:
+  cors:
+    allowed-origins: http://localhost:3000
+  security:
+    jwt:
+      secret: test-only-jwt-secret-0123456789abcdef0123456789
+    auth:
+      max-failed-logins: 5
+      cookie:
+        secure: true
+        same-site: Lax

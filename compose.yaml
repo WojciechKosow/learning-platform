@@ -1,0 +1,21 @@
+# Local PostgreSQL for development: `docker compose up -d`.
+# Credentials are local-only and match application-dev.yml.
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: learning_platform
+      POSTGRES_USER: learning_platform
+      POSTGRES_PASSWORD: learning_platform
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U learning_platform -d learning_platform"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres-data:
