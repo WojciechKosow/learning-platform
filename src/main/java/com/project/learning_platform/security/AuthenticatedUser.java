@@ -1,7 +1,6 @@
 package com.project.learning_platform.security;
 
-import com.project.learning_platform.user.UserRole;
-
+import com.project.learning_platform.entity.UserRole;
 import java.security.Principal;
 import java.util.UUID;
 

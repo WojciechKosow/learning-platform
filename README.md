@@ -295,21 +295,28 @@ proxy the API under a different path, update `AUTH_COOKIE_PATH`.
 
 ## Project structure
 
+Layered, the same way as Scrivetta (ebook_writer):
+
 ```
 src/main/java/com/project/learning_platform/
-├── auth/            AuthController, AuthService, refresh tokens + cookie, DTOs
-├── user/            User entity, role/status, repository, UserResponse
-├── security/        SecurityConfig, JWT issuing/verification, principal, CORS
-└── common/
-    ├── error/       ErrorCode, ApiException, GlobalExceptionHandler (problem+json)
-    └── validation/  @MaxUtf8Bytes
+├── controller/          AuthController (thin: HTTP in, DTO out)
+├── service/             AuthService, RefreshTokenService (business logic, transactions)
+├── repository/          UserRepository, RefreshTokenRepository (Spring Data JPA)
+├── entity/              User, UserRole, UserStatus, RefreshToken
+├── dto/                 UserDTO
+├── request/             RegisterRequest, LoginRequest (validated input)
+├── response/            AuthResponse
+├── security/            SecurityConfig, PasswordConfig, JwtProvider, AuthCookies,
+│                        UserJwtAuthenticationConverter, AuthenticatedUser, error handler
+├── config/properties/   JwtProperties, AuthProperties, CorsProperties (env-driven settings)
+├── exceptions/          ErrorCode, ApiException, GlobalExceptionHandler (problem+json)
+└── validation/          @MaxUtf8Bytes
 src/main/resources/
 ├── application.yml, application-dev.yml
-└── db/migration/    Flyway migrations
-src/test/java/...    Testcontainers + MockMvc integration tests, unit tests
+└── db/migration/        Flyway migrations
+src/test/java/...        Testcontainers + MockMvc integration tests, unit tests
 ```
 
-New features go into their own package (e.g. `learning/`, `assessment/`,
-`project/`, `execution/`, `github/`) following the same controller → service →
-repository layout with DTOs at the edge. See
-[docs/architecture.md](docs/architecture.md).
+A new feature adds its classes to these layers: an entity + repository, a
+service with the logic, a controller, request/response DTOs, and a Flyway
+migration. See [docs/architecture.md](docs/architecture.md).

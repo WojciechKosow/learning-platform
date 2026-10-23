@@ -3,26 +3,31 @@
 How the foundation is meant to grow, and the boundaries that must hold as it
 does.
 
-## Modules
+## Code layout
 
-One package per business capability; each keeps its own controller, service,
-repository, entities and DTOs. Controllers stay thin, entities never leave the
-service layer (map them to DTOs), dependencies are constructor-injected.
+Layered packages, as in Scrivetta: `controller` → `service` → `repository` →
+`entity`, with `request` / `response` / `dto` at the API edge, plus `security`,
+`config/properties` and `exceptions`. Controllers stay thin, entities never
+leave the service layer (map them to DTOs), dependencies are
+constructor-injected.
 
-| Package | Status | Owns |
+| Area | Status | Main classes / tables |
 |---|---|---|
-| `user` | done | Account identity and state (`users`) |
-| `auth` | done | Registration, login, sessions (`refresh_tokens`) |
-| `security` | done | JWT, filter chain, CORS, authenticated principal |
-| `common` | done | Error format, shared validation |
-| `learning` | next | Learner profile: goals, preferred track, onboarding progress |
-| `assessment` | planned | AI assessments, questions, practical tasks, results |
-| `skill` | planned | Skill catalogue and per-user skill profile (verified / unverified) |
-| `project` / `task` | planned | Tracks, projects, tasks, submissions |
-| `mentoring` | planned | AI help sessions with tiered assistance (hint → explanation → example → direct help) |
-| `execution` | planned | Client for the isolated execution service (see below) |
-| `github` | planned | GitHub connection and approved repository actions (see below) |
-| `billing` | planned | Subscriptions and usage tracking |
+| Accounts | done | `User`, `UserRepository` (`users`) |
+| Authentication | done | `AuthController`, `AuthService`, `RefreshTokenService` (`refresh_tokens`) |
+| Security | done | `SecurityConfig`, `JwtProvider`, `UserJwtAuthenticationConverter`, CORS |
+| Errors | done | `ErrorCode`, `ApiException`, `GlobalExceptionHandler` |
+| Learner profile | next | goals, preferred track, onboarding progress |
+| Assessment | planned | AI assessments, questions, practical tasks, results |
+| Skills | planned | skill catalogue and per-user skill profile (verified / unverified) |
+| Projects / tasks | planned | tracks, projects, tasks, submissions |
+| Mentoring | planned | AI help sessions with tiered assistance (hint → explanation → example → direct help) |
+| Execution | planned | client for the isolated execution service (see below) |
+| GitHub | planned | GitHub connection and approved repository actions (see below) |
+| Billing | planned | subscriptions and usage tracking |
+
+If the number of features grows large, grouping by feature (one package per
+area, each with its own layers) is an easy, mechanical move later.
 
 ### Keeping `User` small
 
@@ -65,9 +70,8 @@ Next.js ──> API (this app) ──(job: repo snapshot + command + limits)─�
                                                                      (separate service, separate hosts)
 ```
 
-- The API only creates execution jobs and stores results; an `execution`
-  package will hold a client interface (`ExecutionService`) plus job/result
-  entities.
+- The API only creates execution jobs and stores results: an
+  `ExecutionService` client in `service/` plus job/result entities.
 - Workers run each job in a fresh, disposable sandbox (gVisor/Firecracker or an
   equivalent hardened container runtime): non-root, no host mounts, no network
   by default (or an allow-list for dependency mirrors), CPU/memory/disk/process
