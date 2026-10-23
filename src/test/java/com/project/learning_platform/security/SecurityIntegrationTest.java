@@ -1,7 +1,8 @@
 package com.project.learning_platform.security;
 
-import com.jayway.jsonpath.JsonPath;
+import com.project.learning_platform.config.properties.JwtProperties;
 import com.project.learning_platform.support.IntegrationTest;
+import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
